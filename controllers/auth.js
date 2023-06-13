@@ -10,10 +10,7 @@ async function register(req, res, next) {
       password,
     });
 
-    res.status(201).json({
-      success: true,
-      user,
-    });
+    sendToken(user, 201, res);
   } catch (error) {
     // res.status(500).json({
     //   success: false,
@@ -45,10 +42,7 @@ async function login(req, res, next) {
       return next(new ErrorResponse("Invalid Credentials", 401));
     }
 
-    res.status(200).json({
-      success: true,
-      token : "sdhfwieuy78w6ihfl",
-    });
+    sendToken(userData, 200, res);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -63,6 +57,12 @@ function forgotPassword(req, res, next) {
 
 function resetPassword(req, res, next) {
   res.send("resetPassword router");
+}
+
+const sendToken = (user, statusCode, res) => {
+    const token = user.getSingnedToken();
+
+    res.status(statusCode).json({success : true, token});
 }
 
 export { register, login, forgotPassword, resetPassword };
