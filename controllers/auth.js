@@ -24,15 +24,13 @@ async function login(req, res, next) {
   const { email, password } = req.body;
 
   if (!email || !password) {
-
-    return next(new ErrorResponse("Please Provide an Email and password", 400))
+    return next(new ErrorResponse("Please Provide an Email and password", 400));
   }
 
   try {
     const userData = await User.findOne({ email }).select("+password");
 
     if (!userData) {
-
       return next(new ErrorResponse("Invalid Credentials", 400));
     }
 
@@ -51,8 +49,29 @@ async function login(req, res, next) {
   }
 }
 
-function forgotPassword(req, res, next) {
-  res.send("forgotPassword router");
+async function forgotPassword(req, res, next) {
+  const { email } = req.body;
+
+  try {
+    const user = User.findOne({ email });
+
+    if (!user) {
+      return next(
+        new ErrorResponse("Can not send Email to this Email Address", 404)
+      );
+    }
+
+    const resetToken = User.getResetPasswordToken();
+    await user.save();
+
+    const getURL = `http://localhost:3000/passwordreset/${resetToken}`;
+
+    const messsage = `
+      <h1>You have requested a password reset</h1>
+      <p>Please click to this link </p>
+      <a href = ${getURL} clicktracking = off > ${getURL} </a>
+    `;
+  } catch (error) {}
 }
 
 function resetPassword(req, res, next) {
@@ -60,9 +79,9 @@ function resetPassword(req, res, next) {
 }
 
 const sendToken = (user, statusCode, res) => {
-    const token = user.getSingnedToken();
+  const token = user.getSingnedToken();
 
-    res.status(statusCode).json({success : true, token});
-}
+  res.status(statusCode).json({ success: true, token });
+};
 
 export { register, login, forgotPassword, resetPassword };
