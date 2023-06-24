@@ -2,6 +2,7 @@ dotenv.config({ path: "./config.env" });
 import dotenv from "dotenv";
 import express from "express";
 import router from "./routes/auth.js";
+import privateRouter from "./routes/private.js";
 import db from "./config/db.js";
 import errorHandle from "./middleware/error.js";
 
@@ -13,7 +14,8 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 
-app.use('/api/auth', router)
+app.use('/api/auth', router);
+app.use('/api/private', privateRouter);
 
 app.use(errorHandle);
 
