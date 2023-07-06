@@ -16,10 +16,10 @@ async function register(req, res, next) {
 
     sendToken(user, 201, res);
   } catch (error) {
-    // res.status(500).json({
-    //   success: false,
-    //   error: error.message,
-    // }
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    }
     next(error);
   }
 }
